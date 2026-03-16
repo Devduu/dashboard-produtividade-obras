@@ -59,5 +59,6 @@ dashboard-produtividade-obras/
 | Kauê de Almeida Pena | 564211 |
 | Lucas Rowlands Abat | 562994 |
 | Ronaldo Aparecido Monteiro Almeida | 565017 |
+| William Queiroz | 565032 |
 |  |  |
 ```
