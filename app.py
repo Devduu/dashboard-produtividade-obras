@@ -362,5 +362,41 @@ with aba5:
         """
         )
 
-    # TODO: FALTA ADICIONAR a aba da questão extra do vídeo do YouTube
     # Criar uma aba6 com anotações sobre o vídeo
+    # Questão extra: vídeo sobre produtividade
+    with st.expander("E) Análise do vídeo sobre produtividade em obras"):
+        st.write(
+                """
+    Pelo que foi apresentado no vídeo, o acompanhamento da produtividade em obras é realizado
+    a partir de um índice calculado pela relação entre insumo e produto, como por exemplo
+    horas de trabalho em relação à área executada em metros quadrados. A partir das
+    apropriações diárias, são obtidos valores de produtividade ao longo do tempo,
+    permitindo analisar tanto os resultados diários quanto indicadores agregados,
+    como a média e o resultado acumulado. A proposta é identificar o comportamento
+    estatístico da produtividade de determinado serviço e, com base nessa distribuição,
+    estimar um coeficiente representativo.
+
+    Para isso, são utilizadas medidas estatísticas como a moda do índice de produtividade
+    e também valores de referência já existentes em tabelas técnicas, como SINAPI,
+    SICRO e SIURB. Esses valores são então combinados por meio de uma média ponderada,
+    juntamente com o valor mais representativo dos dados observados, para calcular
+    um coeficiente de produtividade sugerido que possa servir como referência em
+    análises e planejamentos de obras.
+
+    Uma dúvida que surge na metodologia apresentada está relacionada ao chamado
+    gráfico ou critério de suficiência utilizado no acompanhamento da produtividade.
+    Esse gráfico parece representar o comportamento do resultado acumulado ao longo
+    das apropriações diárias. Conforme novos dados são coletados, o índice acumulado
+    tende a convergir e apresentar menor variação ao longo do tempo. A partir desse
+    ponto, considera-se que existe uma quantidade suficiente de dados para realizar
+    a modelagem estatística da produtividade.
+
+    Entretanto, não fica totalmente claro qual é o critério utilizado para determinar
+    essa suficiência. Não se sabe se existe um limite específico de variação percentual,
+    algum teste estatístico formal ou se a avaliação é feita apenas pela observação
+    visual da estabilização da curva no gráfico. Também permanece a dúvida sobre
+    como esse critério considera possíveis variáveis externas ou a presença de
+    outliers que possam influenciar significativamente os resultados observados
+    durante o período analisado.
+    """
+            )
