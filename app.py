@@ -137,15 +137,19 @@ with aba3:
         x="ip_d",
         nbins=50,
         title="Histograma do índice de produtividade diário (ip_d)",
-        labels={"ip_d": "ip_d", "count": "Frequência"},
+        labels={"ip_d": "ip_d"},
         color_discrete_sequence=["#378ADD"],
     )
-    fig_hist.update_traces(marker_line_color="black", marker_line_width=1)
-    fig_hist.update_layout(height=500, bargap=0.05)
+    fig_hist.update_traces(
+        marker_line_color="black",
+        marker_line_width=1,
+        hovertemplate="ip_d=%{x}<br>Frequência=%{y}<extra></extra>",
+    )
+    fig_hist.update_layout(height=500, bargap=0.05, yaxis_title="Frequência")
     st.plotly_chart(fig_hist, use_container_width=True, key="hist")
 
-    # Curva de densidade: mesma informação do histograma mas em probabilidade
-    # histnorm="probability density" normaliza o eixo Y de 0 a 1
+    # Curva de densidade: mesma informação do histograma mas em densidade de probabilidade
+    # histnorm="probability density" faz a área total das barras somar 1
     fig_dens = px.histogram(
         df_filtrado,
         x="ip_d",
@@ -155,8 +159,13 @@ with aba3:
         labels={"ip_d": "ip_d"},
         color_discrete_sequence=["#1D9E75"],
     )
-    fig_dens.update_traces(opacity=0.7, marker_line_color="black", marker_line_width=1)
-    fig_dens.update_layout(height=500, bargap=0.05)
+    fig_dens.update_traces(
+        opacity=0.7,
+        marker_line_color="black",
+        marker_line_width=1,
+        hovertemplate="ip_d=%{x}<br>Densidade=%{y}<extra></extra>",
+    )
+    fig_dens.update_layout(height=500, bargap=0.05, yaxis_title="Densidade")
     st.plotly_chart(fig_dens, use_container_width=True, key="dens")
 
     # Boxplot: compara a distribuição do ip_d entre as obras
