@@ -79,11 +79,12 @@ def resumir_por_obra(dados):
     )
 
 
-# Mostra o resumo por obra em uma tabela
+# Mostra o resumo por obra em uma tabela, com os nomes das colunas legíveis
 # Obra com um registro só não tem desvio nem CV, por isso aparece N/A
 
 def mostrar_resumo(resumo):
-    st.dataframe(resumo, width="stretch", placeholder="N/A")
+    tabela = resumo.rename(columns={"nome_obra": "Obra", "Media": "Média"})
+    st.dataframe(tabela, width="stretch", placeholder="N/A")
 
 
 # Corta nomes com mais de 25 caracteres para caberem no eixo do gráfico
