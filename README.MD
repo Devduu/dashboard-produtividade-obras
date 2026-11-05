@@ -17,7 +17,7 @@ O dashboard analisa dados diários de apropriação de obras, com foco no índic
 
 ## 🔍 O que o dashboard faz
 
-- Lê e filtra automaticamente os dados de mão de obra da base `df_diarios.xlsx`
+- Lê e filtra automaticamente os dados de mão de obra da base `df_diarios.xlsx`, usando só os registros com nome de obra (486 de 4.327)
 - Permite filtrar por obra, caderno e grupo de serviço
 - Calcula e exibe estatísticas descritivas: média, mediana, moda, desvio-padrão, variância, amplitude e CV
 - Exibe histograma, curva de densidade, boxplot e gráficos de barras

@@ -15,6 +15,7 @@ st.set_page_config(
 # @st.cache_data faz o arquivo ser lido só uma vez e guardado na memória
 # Isso evita que o Excel seja relido toda vez que o usuário mexe em um filtro
 # Mantém só os registros de mão de obra e tira as linhas sem ip_d ou sem obra
+# Guarda o total de mão de obra antes do corte para mostrar no aviso do topo
 
 PLANILHA = Path(__file__).parent / "df_diarios.xlsx"
 
@@ -22,11 +23,12 @@ PLANILHA = Path(__file__).parent / "df_diarios.xlsx"
 def carregar_dados():
     df = pd.read_excel(PLANILHA)
     df = df[df["tipo_insumo"] == "MAO DE OBRA"].copy()
+    total_mao_de_obra = len(df)
     df = df.dropna(subset=["ip_d", "nome_obra"])
-    return df
+    return df, total_mao_de_obra
 
 
-df = carregar_dados()
+df, total_mao_de_obra = carregar_dados()
 
 # Sidebar com filtros
 # A sidebar é o painel lateral esquerdo do dashboard
@@ -86,8 +88,10 @@ def nome_curto(nome):
 # Título
 st.title("🏗️ Dashboard de Produtividade Mão de Obra")
 # Aviso explicando por que os dados foram filtrados (requisito do enunciado)
+total_formatado = f"{total_mao_de_obra:,}".replace(",", ".")  # 4327 vira 4.327
 st.warning(
-    "⚠️ Dados filtrados para mão de obra, garantindo comparação coerente de produtividade entre os grupos."
+    "⚠️ Dados filtrados para mão de obra, garantindo comparação coerente de produtividade entre os grupos. "
+    f"Só entram os registros com nome de obra ({len(df)} de {total_formatado})."
 )
 
 # Abas
