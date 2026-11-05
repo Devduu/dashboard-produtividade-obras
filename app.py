@@ -99,20 +99,24 @@ with aba2:
     col1, col2, col3 = st.columns(3)
     col1.metric("Média", f"{df_filtrado['ip_d'].mean():.3f}")
     col2.metric("Mediana", f"{df_filtrado['ip_d'].median():.3f}")
-    # Proteção: mode() pode retornar vazio se não houver moda definida
+    # Proteção: se nenhum valor se repete, mode() devolve todos e não existe moda
     moda = df_filtrado["ip_d"].mode()
-    col3.metric("Moda", f"{moda[0]:.3f}" if not moda.empty else "N/A")
+    tem_moda = df_filtrado["ip_d"].duplicated().any()
+    col3.metric("Moda", f"{moda[0]:.3f}" if tem_moda else "N/A")
 
     # ── Medidas de dispersão ──
+    # Proteção: um único registro não tem desvio-padrão nem variância
+    desvio = df_filtrado["ip_d"].std()
+    variancia = df_filtrado["ip_d"].var()
     col4, col5, col6 = st.columns(3)
-    col4.metric("Desvio-padrão", f"{df_filtrado['ip_d'].std():.3f}")
-    col5.metric("Variância", f"{df_filtrado['ip_d'].var():.3f}")
+    col4.metric("Desvio-padrão", f"{desvio:.3f}" if pd.notna(desvio) else "N/A")
+    col5.metric("Variância", f"{variancia:.3f}" if pd.notna(variancia) else "N/A")
     amplitude = df_filtrado["ip_d"].max() - df_filtrado["ip_d"].min()
     col6.metric("Amplitude", f"{amplitude:.3f}")
 
     # Proteção: evita divisão por zero se a média for 0
-    cv = (df_filtrado["ip_d"].std() / df_filtrado["ip_d"].mean()) * 100 if df_filtrado["ip_d"].mean() != 0 else 0
-    st.metric("Coeficiente de Variação (CV)", f"{cv:.1f}%")
+    cv = (desvio / df_filtrado["ip_d"].mean()) * 100 if df_filtrado["ip_d"].mean() != 0 else 0
+    st.metric("Coeficiente de Variação (CV)", f"{cv:.1f}%" if pd.notna(cv) else "N/A")
     st.info(
         "O CV indica a variabilidade relativa. CV abaixo de 15% = baixa variabilidade. Entre 15% e 30% = média. Acima de 30% = alta."
     )
