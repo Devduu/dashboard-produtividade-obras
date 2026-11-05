@@ -47,7 +47,7 @@ grupo_selecionado = st.sidebar.selectbox("Grupo", grupos)
 # Aplicar filtros 
 # Começa com todos os dados e vai filtrando conforme o usuário seleciona
 
-df_filtrado = df.copy()
+df_filtrado = df
 if obra_selecionada != "Todas":
     df_filtrado = df_filtrado[df_filtrado["nome_obra"] == obra_selecionada]
 if caderno_selecionado != "Todos":
@@ -61,6 +61,28 @@ if grupo_selecionado != "Todos":
 if df_filtrado.empty:
     st.warning("⚠️ Nenhum registro encontrado para os filtros selecionados. Tente outra combinação.")
     st.stop()
+
+# Calcula média, mediana, desvio e CV do ip_d de cada obra
+
+def resumir_por_obra(dados):
+    return (
+        dados.groupby("nome_obra")["ip_d"]
+        .agg(
+            Media="mean",
+            Mediana="median",
+            Desvio="std",
+            CV=lambda x: x.std() / x.mean() * 100 if x.mean() != 0 else 0,
+        )
+        .reset_index()
+        .round(3)
+    )
+
+
+# Corta nomes com mais de 25 caracteres para caberem no eixo do gráfico
+
+def nome_curto(nome):
+    return nome[:25] + "..." if len(nome) > 25 else nome
+
 
 # Título 
 st.title("🏗️ Dashboard de Produtividade Mão de Obra")
@@ -208,7 +230,7 @@ with aba3:
             tickfont=dict(size=11),
             tickmode="array",
             tickvals=df_grupo["grupo"].tolist(),
-            ticktext=[t[:25] + "..." if len(t) > 25 else t for t in df_grupo["grupo"].tolist()]
+            ticktext=[nome_curto(t) for t in df_grupo["grupo"]],
         )
     )
     st.plotly_chart(fig_bar_grupo, width="stretch", key="bar_grupo")
@@ -220,17 +242,7 @@ with aba4:
     st.subheader("Comparação de produtividade por obra")
 
     # Agrupa os dados por obra e calcula as 4 métricas para cada uma
-    resumo = (
-        df_filtrado.groupby("nome_obra")["ip_d"]
-        .agg(
-            Media="mean",
-            Mediana="median",
-            Desvio="std",
-            CV=lambda x: x.std() / x.mean() * 100 if x.mean() != 0 else 0,
-        )
-        .reset_index()
-        .round(3)
-    )
+    resumo = resumir_por_obra(df_filtrado)
 
     st.dataframe(resumo, width="stretch")
 
@@ -257,17 +269,7 @@ with aba5:
     st.subheader("Perguntas orientadoras")
 
     # Calcula resumo com todas as obras para usar nas respostas
-    resumo_obras = (
-        df.groupby("nome_obra")["ip_d"]
-        .agg(
-            Media="mean",
-            Mediana="median",
-            Desvio="std",
-            CV=lambda x: x.std() / x.mean() * 100 if x.mean() != 0 else 0,
-        )
-        .reset_index()
-        .round(3)
-    )
+    resumo_obras = resumir_por_obra(df)
 
     # Identifica as obras com maior e menor média de ip_d e com menor e maior CV
     obra_maior = resumo_obras.loc[resumo_obras["Media"].idxmax(), "nome_obra"]
@@ -324,7 +326,7 @@ with aba5:
                 tickfont=dict(size=11),
                 tickmode="array",
                 tickvals=resumo_grupos.head(10)["grupo"].tolist(),
-                ticktext=[t[:25] + "..." if len(t) > 25 else t for t in resumo_grupos.head(10)["grupo"].tolist()]
+                ticktext=[nome_curto(t) for t in resumo_grupos.head(10)["grupo"]],
             )
         )
         st.plotly_chart(fig_bar_b, width="stretch", key="bar_b")
