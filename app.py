@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+from pathlib import Path
 
 # Configuração da página 
 # Define o título da aba do navegador, o ícone e o layout largo
@@ -14,9 +15,11 @@ st.set_page_config(
 # @st.cache_data faz o arquivo ser lido só uma vez e guardado na memória
 # Isso evita que o Excel seja relido toda vez que o usuário mexe em um filtro
 
+PLANILHA = Path(__file__).parent / "df_diarios.xlsx"
+
 @st.cache_data
 def carregar_dados():
-    df = pd.read_excel("df_diarios.xlsx")
+    df = pd.read_excel(PLANILHA)
     # Filtra apenas os registros de mão de obra — requisito do enunciado
     df = df[df["tipo_insumo"] == "MAO DE OBRA"].copy()
     # Remove linhas sem ip_d ou sem nome_obra para evitar erros nos gráficos
