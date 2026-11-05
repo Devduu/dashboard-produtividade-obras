@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 from pathlib import Path
 
-# Configuração da página 
+# Configuração da página
 # Define o título da aba do navegador, o ícone e o layout largo
 
 st.set_page_config(
@@ -11,25 +11,24 @@ st.set_page_config(
 )
 
 
-# Leitura dos dados 
+# Leitura dos dados
 # @st.cache_data faz o arquivo ser lido só uma vez e guardado na memória
 # Isso evita que o Excel seja relido toda vez que o usuário mexe em um filtro
+# Mantém só os registros de mão de obra e tira as linhas sem ip_d ou sem obra
 
 PLANILHA = Path(__file__).parent / "df_diarios.xlsx"
 
 @st.cache_data
 def carregar_dados():
     df = pd.read_excel(PLANILHA)
-    # Filtra apenas os registros de mão de obra — requisito do enunciado
     df = df[df["tipo_insumo"] == "MAO DE OBRA"].copy()
-    # Remove linhas sem ip_d ou sem nome_obra para evitar erros nos gráficos
     df = df.dropna(subset=["ip_d", "nome_obra"])
     return df
 
 
 df = carregar_dados()
 
-# Sidebar com filtros 
+# Sidebar com filtros
 # A sidebar é o painel lateral esquerdo do dashboard
 # Cada selectbox cria um filtro com as opções únicas da coluna
 
@@ -44,7 +43,7 @@ caderno_selecionado = st.sidebar.selectbox("Caderno", cadernos)
 grupos = ["Todos"] + sorted(df["grupo"].dropna().unique().tolist())
 grupo_selecionado = st.sidebar.selectbox("Grupo", grupos)
 
-# Aplicar filtros 
+# Aplicar filtros
 # Começa com todos os dados e vai filtrando conforme o usuário seleciona
 
 df_filtrado = df
@@ -84,7 +83,7 @@ def nome_curto(nome):
     return nome[:25] + "..." if len(nome) > 25 else nome
 
 
-# Título 
+# Título
 st.title("🏗️ Dashboard de Produtividade Mão de Obra")
 # Aviso explicando por que os dados foram filtrados (requisito do enunciado)
 st.warning(
@@ -99,19 +98,15 @@ aba1, aba2, aba3, aba4, aba5 = st.tabs(
     ["📋 Dados", "📐 Estatísticas", "📊 Gráficos", "🔍 Comparações", "❓ Perguntas"]
 )
 
-# Aba 1: Dados 
+# Aba 1: Dados
 # Mostra a tabela com todos os registros filtrados
-# TODO: FALTA ADICIONAR a tabela classificando as colunas da planilha
-# (qualitativa nominal, quantitativa contínua, etc) (requisito etapa 1)
-# TODO: FALTA ADICIONAR a lista de perguntas de um gestor de obras
-# — requisito etapa 3 do enunciado
 
 with aba1:
     st.subheader("Base de dados (Mão de Obra)")
     st.write(f"Total de registros: **{len(df_filtrado)}**")
     st.dataframe(df_filtrado, width="stretch")
 
-# Aba 2: Estatísticas 
+# Aba 2: Estatísticas
 # Calcula e exibe as medidas de posição central e dispersão do ip_d
 # ip_d é o índice de produtividade diário (principal variável da análise)
 # ip_d = qntd / qs, ou seja, horas de mão de obra por unidade de serviço
@@ -120,7 +115,7 @@ with aba1:
 with aba2:
     st.subheader("Estatísticas descritivas do ip_d")
 
-    # ── Medidas de posição central ──
+    # Medidas de posição central
     col1, col2, col3 = st.columns(3)
     col1.metric("Média", f"{df_filtrado['ip_d'].mean():.3f}")
     col2.metric("Mediana", f"{df_filtrado['ip_d'].median():.3f}")
@@ -129,7 +124,7 @@ with aba2:
     tem_moda = df_filtrado["ip_d"].duplicated().any()
     col3.metric("Moda", f"{moda[0]:.3f}" if tem_moda else "N/A")
 
-    # ── Medidas de dispersão ──
+    # Medidas de dispersão
     # Proteção: um único registro não tem desvio-padrão nem variância
     desvio = df_filtrado["ip_d"].std()
     variancia = df_filtrado["ip_d"].var()
@@ -145,12 +140,8 @@ with aba2:
     st.info(
         "O CV indica a variabilidade relativa. CV abaixo de 15% = baixa variabilidade. Entre 15% e 30% = média. Acima de 30% = alta."
     )
-    # TODO: FALTA ADICIONAR texto explicando quando usar média, mediana e moda
-    # — requisito etapa 4 do enunciado
-    # TODO: FALTA ADICIONAR texto explicando o que desvio, variância, amplitude
-    # e CV significam na prática para produtividade — requisito etapa 5
 
-# Aba 3: Gráficos 
+# Aba 3: Gráficos
 # Contém 4 gráficos: histograma, densidade, boxplot e barras por grupo
 
 with aba3:
@@ -235,7 +226,7 @@ with aba3:
     )
     st.plotly_chart(fig_bar_grupo, width="stretch", key="bar_grupo")
 
-# Aba 4: Comparações 
+# Aba 4: Comparações
 # Tabela e gráfico comparando média, mediana, desvio e CV entre as obras
 
 with aba4:
@@ -259,10 +250,10 @@ with aba4:
     fig_bar.update_layout(height=500)
     st.plotly_chart(fig_bar, width="stretch", key="bar_obras")
 
-# Aba 5: Perguntas orientadoras 
+# Aba 5: Perguntas orientadoras
 # Responde as perguntas A, B, C e D do enunciado com gráfico + texto
 # ATENÇÃO: esta aba usa "df" (dados completos) e não "df_filtrado"
-# Isso é intencional — as respostas mostram sempre todas as obras
+# Isso é intencional: as respostas mostram sempre todas as obras
 # para garantir que a comparação seja completa independente dos filtros
 
 with aba5:
@@ -289,7 +280,6 @@ with aba5:
         )
         fig_box_obras.update_layout(height=500)
         st.plotly_chart(fig_box_obras, width="stretch", key="box_obras")
-        # TODO: reescrever este texto com as palavras do grupo — requisito do enunciado
         st.write(
             f"""
         Sim, há diferenças visíveis de produtividade entre as obras.
@@ -330,7 +320,6 @@ with aba5:
             )
         )
         st.plotly_chart(fig_bar_b, width="stretch", key="bar_b")
-        # TODO: reescrever este texto com as palavras do grupo (requisito do enunciado)
         st.write(
             """
         Sim, o ip_d varia bastante entre os grupos de serviço.
@@ -344,7 +333,6 @@ with aba5:
     # Pergunta C: relação entre média e mediana
     with st.expander("C) Como está a relação entre média e mediana nos grupos?"):
         st.dataframe(resumo_obras, width="stretch")
-        # TODO: reescrever este texto com as palavras do grupo (requisito do enunciado)
         st.write(
             """
         Em todas as obras, a **média é maior que a mediana**, o que indica
@@ -355,7 +343,7 @@ with aba5:
         """
         )
 
-    # Pergunta D: previsibilidade por obra (usa CV quanto menor, mais previsível)
+    # Pergunta D: previsibilidade por obra (usa o CV: quanto menor, mais previsível)
     with st.expander(
         "D) Quais grupos apresentam produtividade mais e menos previsível?"
     ):
@@ -364,7 +352,7 @@ with aba5:
             resumo_obras.sort_values("CV"),
             x="nome_obra",
             y="CV",
-            title="Coeficiente de Variação (CV) por Obra (quanto menor mais previsível)",
+            title="Coeficiente de Variação (CV) por Obra (quanto menor, mais previsível)",
             labels={"nome_obra": "Obra", "CV": "CV (%)"},
             color="CV",
             color_continuous_scale="RdYlGn_r",
@@ -372,17 +360,15 @@ with aba5:
         fig_cv.update_traces(marker_line_color="black", marker_line_width=1)
         fig_cv.update_layout(height=500)
         st.plotly_chart(fig_cv, width="stretch", key="cv")
-        # TODO: reescrever este texto com as palavras do grupo (requisito do enunciado)
         st.write(
             f"""
         A obra **{obra_mais_estavel}** apresenta o menor CV, indicando comportamento mais estável
-        e previsível — útil para planejamento e orçamento com maior confiança.
+        e previsível, útil para planejamento e orçamento com maior confiança.
         Já a obra **{obra_menos_estavel}** apresenta o maior CV, o que significa alta variabilidade
         no desempenho diário, exigindo maior atenção do gestor e margens de segurança no planejamento.
         """
         )
 
-    # Criar uma aba6 com anotações sobre o vídeo
     # Questão extra: vídeo sobre produtividade
     with st.expander("E) Análise do vídeo sobre produtividade em obras"):
         st.write(
