@@ -89,8 +89,8 @@ with aba1:
 # Aba 2: Estatísticas 
 # Calcula e exibe as medidas de posição central e dispersão do ip_d
 # ip_d é o índice de produtividade diário (principal variável da análise)
-# ip_d = 1 significa que a equipe produziu exatamente o esperado
-# ip_d > 1 = produziu mais que o esperado / ip_d < 1 = produziu menos
+# ip_d = qntd / qs, ou seja, horas de mão de obra por unidade de serviço
+# Quanto menor o ip_d, menos horas por unidade e maior a produtividade
 
 with aba2:
     st.subheader("Estatísticas descritivas do ip_d")
@@ -253,7 +253,7 @@ with aba5:
         .round(3)
     )
 
-    # Identifica automaticamente as obras mais/menos produtivas e estáveis
+    # Identifica as obras com maior e menor média de ip_d e com menor e maior CV
     obra_maior = resumo_obras.loc[resumo_obras["Media"].idxmax(), "nome_obra"]
     obra_menor = resumo_obras.loc[resumo_obras["Media"].idxmin(), "nome_obra"]
     obra_mais_estavel = resumo_obras.loc[resumo_obras["CV"].idxmin(), "nome_obra"]
@@ -275,7 +275,8 @@ with aba5:
         st.write(
             f"""
         Sim, há diferenças visíveis de produtividade entre as obras.
-        A obra com maior média de ip_d é a **{obra_maior}**, enquanto a com menor média é a **{obra_menor}**.
+        A obra que mais consome horas por unidade de serviço, com a maior média de ip_d, é a **{obra_maior}**.
+        A que menos consome, com a menor média, é a **{obra_menor}**.
         Essas diferenças podem estar relacionadas ao tipo de serviço executado, ao perfil da equipe
         ou às condições de campo de cada obra.
         """
@@ -314,10 +315,11 @@ with aba5:
         # TODO: reescrever este texto com as palavras do grupo (requisito do enunciado)
         st.write(
             """
-        Sim, a produtividade varia bastante entre os diferentes grupos de serviço.
-        Serviços mais padronizados e repetitivos tendem a apresentar maior produtividade,
-        enquanto serviços mais complexos ou que dependem de condições específicas apresentam
-        maior variabilidade e menor ip_d médio.
+        Sim, o ip_d varia bastante entre os grupos de serviço.
+        Como ele mede as horas de mão de obra por unidade de serviço, quanto maior o valor,
+        mais horas cada unidade consome. Os grupos do gráfico são os que mais consomem horas por unidade.
+        Cada serviço tem a sua própria unidade, como m², m³ ou metro linear, então essa comparação
+        também reflete o tipo de serviço, e não só a produtividade da equipe.
         """
         )
 
@@ -326,11 +328,11 @@ with aba5:
         st.dataframe(resumo_obras, use_container_width=True)
         # TODO: reescrever este texto com as palavras do grupo (requisito do enunciado)
         st.write(
-            f"""
-        Em praticamente todas as obras, a **média é maior que a mediana**, o que indica
-        a presença de valores extremos (outliers) que puxam a média para cima.
-        Isso sugere que a maioria dos registros diários apresenta produtividade baixa a moderada,
-        mas existem dias ou equipes com desempenho excepcionalmente alto que distorcem a média.
+            """
+        Em todas as obras, a **média é maior que a mediana**, o que indica
+        que os valores mais altos puxam a média para cima.
+        A maioria dos registros diários fica abaixo da média, e os dias com consumo muito alto
+        de horas por unidade, ou seja, de baixa produtividade, distorcem esse valor.
         Nesses casos, a **mediana é uma medida mais representativa** da produtividade típica.
         """
         )
