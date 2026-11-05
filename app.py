@@ -159,7 +159,7 @@ with aba2:
 with aba3:
     st.subheader("Distribuição do ip_d")
 
-    # Histograma: mostra quantas vezes cada valor de ip_d aparece
+    # Histograma: mostra quantos registros caem em cada faixa de ip_d
     fig_hist = px.histogram(
         df_filtrado,
         x="ip_d",
@@ -239,7 +239,7 @@ with aba3:
     st.plotly_chart(fig_bar_grupo, width="stretch", key="bar_grupo")
 
 # Aba 4: Comparações
-# Tabela e gráfico comparando média, mediana, desvio e CV entre as obras
+# Tabela com média, mediana, desvio e CV de cada obra e gráfico com a média
 
 with aba4:
     st.subheader("Comparação de produtividade por obra")
