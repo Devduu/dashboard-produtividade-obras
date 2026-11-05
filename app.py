@@ -94,7 +94,7 @@ def nome_curto(nome):
 
 
 # Título
-st.title("🏗️ Dashboard de Produtividade Mão de Obra")
+st.title("🏗️ Dashboard de Produtividade de Mão de Obra")
 # Aviso explicando por que os dados foram filtrados (requisito do enunciado)
 total_formatado = f"{total_mao_de_obra:,}".replace(",", ".")  # 4327 vira 4.327
 st.warning(
