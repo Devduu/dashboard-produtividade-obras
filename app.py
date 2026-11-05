@@ -79,6 +79,13 @@ def resumir_por_obra(dados):
     )
 
 
+# Mostra o resumo por obra em uma tabela
+# Obra com um registro só não tem desvio nem CV, por isso aparece N/A
+
+def mostrar_resumo(resumo):
+    st.dataframe(resumo, width="stretch", placeholder="N/A")
+
+
 # Corta nomes com mais de 25 caracteres para caberem no eixo do gráfico
 
 def nome_curto(nome):
@@ -239,7 +246,7 @@ with aba4:
     # Agrupa os dados por obra e calcula as 4 métricas para cada uma
     resumo = resumir_por_obra(df_filtrado)
 
-    st.dataframe(resumo, width="stretch")
+    mostrar_resumo(resumo)
 
     # Gráfico de barras com a média de cada obra
     fig_bar = px.bar(
@@ -336,7 +343,7 @@ with aba5:
 
     # Pergunta C: relação entre média e mediana
     with st.expander("C) Como está a relação entre média e mediana nos grupos?"):
-        st.dataframe(resumo_obras, width="stretch")
+        mostrar_resumo(resumo_obras)
         st.write(
             """
         Em todas as obras, a **média é maior que a mediana**, o que indica
