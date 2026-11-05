@@ -87,7 +87,7 @@ aba1, aba2, aba3, aba4, aba5 = st.tabs(
 with aba1:
     st.subheader("Base de dados (Mão de Obra)")
     st.write(f"Total de registros: **{len(df_filtrado)}**")
-    st.dataframe(df_filtrado, use_container_width=True)
+    st.dataframe(df_filtrado, width="stretch")
 
 # Aba 2: Estatísticas 
 # Calcula e exibe as medidas de posição central e dispersão do ip_d
@@ -149,7 +149,7 @@ with aba3:
         hovertemplate="ip_d=%{x}<br>Frequência=%{y}<extra></extra>",
     )
     fig_hist.update_layout(height=500, bargap=0.05, yaxis_title="Frequência")
-    st.plotly_chart(fig_hist, use_container_width=True, key="hist")
+    st.plotly_chart(fig_hist, width="stretch", key="hist")
 
     # Curva de densidade: mesma informação do histograma mas em densidade de probabilidade
     # histnorm="probability density" faz a área total das barras somar 1
@@ -169,7 +169,7 @@ with aba3:
         hovertemplate="ip_d=%{x}<br>Densidade=%{y}<extra></extra>",
     )
     fig_dens.update_layout(height=500, bargap=0.05, yaxis_title="Densidade")
-    st.plotly_chart(fig_dens, use_container_width=True, key="dens")
+    st.plotly_chart(fig_dens, width="stretch", key="dens")
 
     # Boxplot: compara a distribuição do ip_d entre as obras
     # A caixa = 50% dos dados / linha no meio = mediana / pontos = outliers
@@ -182,7 +182,7 @@ with aba3:
         color="nome_obra",
     )
     fig_box.update_layout(height=500)
-    st.plotly_chart(fig_box, use_container_width=True, key="box")
+    st.plotly_chart(fig_box, width="stretch", key="box")
 
     # Gráfico de barras: média do ip_d por grupo de serviço, do maior para o menor
     # Nomes com mais de 25 caracteres são truncados com "..." para caber no gráfico
@@ -211,7 +211,7 @@ with aba3:
             ticktext=[t[:25] + "..." if len(t) > 25 else t for t in df_grupo["grupo"].tolist()]
         )
     )
-    st.plotly_chart(fig_bar_grupo, use_container_width=True, key="bar_grupo")
+    st.plotly_chart(fig_bar_grupo, width="stretch", key="bar_grupo")
 
 # Aba 4: Comparações 
 # Tabela e gráfico comparando média, mediana, desvio e CV entre as obras
@@ -232,7 +232,7 @@ with aba4:
         .round(3)
     )
 
-    st.dataframe(resumo, use_container_width=True)
+    st.dataframe(resumo, width="stretch")
 
     # Gráfico de barras com a média de cada obra
     fig_bar = px.bar(
@@ -245,7 +245,7 @@ with aba4:
     )
     fig_bar.update_traces(marker_line_color="black", marker_line_width=1)
     fig_bar.update_layout(height=500)
-    st.plotly_chart(fig_bar, use_container_width=True, key="bar_obras")
+    st.plotly_chart(fig_bar, width="stretch", key="bar_obras")
 
 # Aba 5: Perguntas orientadoras 
 # Responde as perguntas A, B, C e D do enunciado com gráfico + texto
@@ -286,7 +286,7 @@ with aba5:
             labels={"nome_obra": "Obra", "ip_d": "ip_d"},
         )
         fig_box_obras.update_layout(height=500)
-        st.plotly_chart(fig_box_obras, use_container_width=True, key="box_obras")
+        st.plotly_chart(fig_box_obras, width="stretch", key="box_obras")
         # TODO: reescrever este texto com as palavras do grupo — requisito do enunciado
         st.write(
             f"""
@@ -327,7 +327,7 @@ with aba5:
                 ticktext=[t[:25] + "..." if len(t) > 25 else t for t in resumo_grupos.head(10)["grupo"].tolist()]
             )
         )
-        st.plotly_chart(fig_bar_b, use_container_width=True, key="bar_b")
+        st.plotly_chart(fig_bar_b, width="stretch", key="bar_b")
         # TODO: reescrever este texto com as palavras do grupo (requisito do enunciado)
         st.write(
             """
@@ -341,7 +341,7 @@ with aba5:
 
     # Pergunta C: relação entre média e mediana
     with st.expander("C) Como está a relação entre média e mediana nos grupos?"):
-        st.dataframe(resumo_obras, use_container_width=True)
+        st.dataframe(resumo_obras, width="stretch")
         # TODO: reescrever este texto com as palavras do grupo (requisito do enunciado)
         st.write(
             """
@@ -369,7 +369,7 @@ with aba5:
         )
         fig_cv.update_traces(marker_line_color="black", marker_line_width=1)
         fig_cv.update_layout(height=500)
-        st.plotly_chart(fig_cv, use_container_width=True, key="cv")
+        st.plotly_chart(fig_cv, width="stretch", key="cv")
         # TODO: reescrever este texto com as palavras do grupo (requisito do enunciado)
         st.write(
             f"""
